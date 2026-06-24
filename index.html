@@ -11,16 +11,12 @@
             font-family: 'Jua', sans-serif;
             user-select: none;
         }
-        .game-card:hover .play-btn {
-            transform: scale(1.05);
-            background-color: #db2777; /* pink-600 */
-        }
     </style>
 </head>
 <body class="bg-gradient-to-br from-indigo-50 via-sky-50 to-pink-50 min-h-screen w-screen flex flex-col items-center justify-start p-6 overflow-x-hidden">
 
-    <header class="text-center my-10 md:my-14 animate-fade-in animate-drop">
-        <h1 class="text-4xl md:text-5xl text-indigo-900 mb-3 drop-shadow-md tracking-wide">
+    <header class="text-center my-10 md:my-14">
+        <h1 class="text-4xl md:text-5xl text-indigo-900 mb-3 drop-shadow-md tracking-wide animate-bounce">
             말랑말랑 미니게임 천국 🎮
         </h1>
         <p class="text-indigo-500 text-base md:text-lg bg-white/60 px-6 py-2 rounded-full border border-indigo-100 shadow-sm inline-block">
@@ -36,17 +32,16 @@
             <div>
                 <div class="flex justify-between items-start mb-4">
                     <span class="bg-pink-100 text-pink-600 font-bold px-3 py-1 rounded-xl text-sm border border-pink-200">⌨️ 타자 연습</span>
-                    <span class="text-xs text-indigo-400 bg-indigo-50 px-2.5 py-0.5 rounded-full">Level 1 ~ 5+</span>
                 </div>
                 <h2 class="text-2xl text-indigo-900 mb-2 flex items-center gap-2">
-                    말랑말랑 단어 소나기 <span class="animate-bounce">🌦️</span>
+                    말랑말랑 단어 소나기 <span class="animate-pulse">🌦️</span>
                 </h2>
                 <p class="text-indigo-600/80 text-sm leading-relaxed mb-6">
                     하늘에서 몽글몽글 떨어지는 단어와 영단어를 땅에 닿기 전에 슥삭슥삭 타이핑해보세요! 얼음 아이템을 맞추면 단어가 5초간 멈춰요!
                 </p>
             </div>
 
-            <a href="./word-shower.html" class="play-btn w-full py-3 bg-pink-500 text-white text-center font-bold text-lg rounded-2xl shadow-md transition-all duration-200 active:scale-95 block">
+            <a href="./word-shower.html" class="w-full py-3 bg-pink-500 text-white text-center font-bold text-lg rounded-2xl shadow-md transition-all duration-200 transform group-hover:scale-[1.03] group-hover:bg-pink-600 active:scale-95 block">
                 게임 시작하기 🚀
             </a>
         </div>
@@ -57,7 +52,6 @@
             <div>
                 <div class="flex justify-between items-start mb-4">
                     <span class="bg-amber-100 text-amber-700 font-bold px-3 py-1 rounded-xl text-sm border border-amber-200">🔢 연산·수학</span>
-                    <span class="text-xs text-amber-500 bg-amber-50 px-2.5 py-0.5 rounded-full">Coming Soon!</span>
                 </div>
                 <h2 class="text-2xl text-indigo-900 mb-2 flex items-center gap-2">
                     와글와글 계산 두더지 🔨
@@ -67,16 +61,16 @@
                 </p>
             </div>
 
-            <a href="./math-mole.html" class="w-full py-3 bg-amber-500 hover:bg-amber-600 text-white text-center font-bold text-lg rounded-2xl shadow-md transition-all duration-200 active:scale-95 block">
-                게임 준비 중 🛠️
+            <a href="./math-mole.html" class="w-full py-3 bg-amber-500 text-white text-center font-bold text-lg rounded-2xl shadow-md transition-all duration-200 transform group-hover:scale-[1.03] group-hover:bg-amber-600 active:scale-95 block">
+                게임 시작하기 🚀
             </a>
         </div>
 
-        <div class="bg-indigo-900/5 p-6 rounded-3xl border-4 border-dashed border-indigo-200 flex flex-col items-center justify-center text-center py-12 min-h-[220px]">
+        <div class="bg-indigo-900/5 p-6 rounded-3xl border-4 border-dashed border-indigo-200 flex flex-col items-center justify-center text-center py-12 min-h-[220px] md:col-span-2">
             <div class="text-3xl mb-2">🤔</div>
             <h3 class="text-lg text-indigo-800 font-bold mb-1">다음 게임은 무엇일까요?</h3>
-            <p class="text-xs text-indigo-500 max-w-[240px]">
-                아이가 좋아하는 학습 주제가 생기면 새로운 미니게임이 이곳에 추가됩니다!
+            <p class="text-xs text-indigo-500 max-w-sm">
+                아이가 좋아하는 학습 주제나 교과 과정이 생기면 새로운 미니게임이 이곳에 추가됩니다!
             </p>
         </div>
 
