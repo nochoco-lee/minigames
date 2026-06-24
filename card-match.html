@@ -38,8 +38,7 @@
 
     <div class="bg-white p-5 rounded-3xl shadow-2xl w-full max-w-xl border-4 border-purple-200 relative overflow-hidden flex flex-col my-auto">
         
-        <!-- 상단 스코어 / 스탯 정보 바 -->
-        <div class="flex justify-between items-center mb-3 bg-purple-50 p-3 rounded-2xl gap-2">
+        <div class="flex justify-between items-center mb-2 bg-purple-50 p-3 rounded-2xl gap-2">
             <div class="text-base text-purple-800 whitespace-nowrap">
                 ⭐ 점수: <span id="score-text" class="text-lg font-bold text-fuchsia-500">0</span>
             </div>
@@ -49,18 +48,19 @@
             <button id="bgm-top-toggle" class="text-sm bg-white hover:bg-purple-100 text-purple-700 font-bold px-2.5 py-1 rounded-xl border border-purple-300 shadow-sm transition active:scale-95 cursor-pointer whitespace-nowrap">
                 🎵 음악 ON
             </button>
-            <div class="flex items-center gap-0.5" id="hp-container">
-                ❤️❤️❤️❤️❤️
+            <div class="text-base text-purple-800 bg-red-50 px-2.5 py-0.5 rounded-full border-2 border-red-200 whitespace-nowrap">
+                ⏳ 시간: <span id="time-text" class="font-bold text-red-600">0</span>초
             </div>
         </div>
 
-        <!-- 중앙 메인 카드 게임 판 -->
-        <div id="game-board-container" class="relative bg-gradient-to-b from-purple-200 to-fuchsia-100 rounded-2xl overflow-hidden border-4 border-purple-400 h-[420px] p-4 flex items-center justify-center">
+        <div class="w-full bg-gray-200 rounded-full h-3 mb-3 overflow-hidden border border-purple-200">
+            <div id="timer-bar" class="bg-gradient-to-r from-red-500 to-fuchsia-500 h-full w-full transition-all duration-300"></div>
+        </div>
+
+        <div id="game-board-container" class="relative bg-gradient-to-b from-purple-200 to-fuchsia-100 rounded-2xl overflow-hidden border-4 border-purple-400 h-[400px] p-4 flex items-center justify-center">
             
-            <!-- 카드 그리드 바디 -->
             <div id="card-grid" class="grid w-full h-full gap-2.5 justify-center items-center"></div>
             
-            <!-- 일시정지 오버레이 -->
             <div id="pause-overlay" class="absolute inset-0 bg-purple-950/60 hidden flex flex-col items-center justify-center z-20">
                 <div class="bg-white border-4 border-purple-400 p-5 rounded-2xl text-center shadow-2xl max-w-xs">
                     <p class="text-purple-700 text-2xl font-bold mb-2">⏸️ 일시정지 중</p>
@@ -69,7 +69,6 @@
             </div>
         </div>
 
-        <!-- 하단 가이드 바 및 컨트롤 버튼 -->
         <div class="mt-3 flex gap-2">
             <div id="status-display" class="flex-1 bg-purple-100 border-2 border-purple-300 rounded-xl py-2.5 text-center text-xl font-bold text-purple-900 shadow-inner">
                 카드를 뒤집어 짝을 맞추세요!
@@ -79,29 +78,27 @@
             </button>
         </div>
 
-        <!-- 시작 스크린 오버레이 -->
         <div id="start-screen" class="absolute inset-0 bg-purple-900/95 flex flex-col items-center justify-center p-6 text-center transition-all duration-500 z-30 overflow-y-auto">
             <h1 class="text-4xl text-white mb-1 drop-shadow-lg">말랑말랑 카드 짝맞추기 🃏</h1>
             <p class="text-purple-200 mb-5 text-sm">귀여운 그림 이모지와 알맞은 영어 단어 카드를 매칭하세요!</p>
             
-            <!-- 단어 난이도 선택 시스템 -->
             <div class="mb-4 bg-white/10 p-4 rounded-2xl border border-white/20 w-full max-w-sm text-center">
                 <span class="block text-yellow-300 text-base mb-3 font-bold">🔤 초대형 단어 데이터 풀 난이도 선택</span>
                 <div class="grid grid-cols-3 gap-2 text-white font-bold text-sm">
                     <label class="flex flex-col items-center justify-center gap-1 cursor-pointer bg-white/5 p-2 rounded-xl hover:bg-white/10 border border-transparent has-[:checked]:border-fuchsia-400 has-[:checked]:bg-purple-800/50">
                         <input type="radio" name="wordDifficulty" value="easy" checked class="accent-fuchsia-500"> 
                         <span>쉬움</span>
-                        <span class="text-xs font-normal text-green-300">점수 1배 (기초)</span>
+                        <span class="text-xs font-normal text-green-300">틀리면 -3초</span>
                     </label>
                     <label class="flex flex-col items-center justify-center gap-1 cursor-pointer bg-white/5 p-2 rounded-xl hover:bg-white/10 border border-transparent has-[:checked]:border-fuchsia-400 has-[:checked]:bg-purple-800/50">
                         <input type="radio" name="wordDifficulty" value="normal" class="accent-fuchsia-500"> 
                         <span>보통</span>
-                        <span class="text-xs font-normal text-yellow-300">점수 2배 (중급)</span>
+                        <span class="text-xs font-normal text-yellow-300">틀리면 -4초</span>
                     </label>
                     <label class="flex flex-col items-center justify-center gap-1 cursor-pointer bg-white/5 p-2 rounded-xl hover:bg-white/10 border border-transparent has-[:checked]:border-fuchsia-400 has-[:checked]:bg-purple-800/50">
                         <input type="radio" name="wordDifficulty" value="hard" class="accent-fuchsia-500"> 
                         <span>어려움</span>
-                        <span class="text-xs font-normal text-orange-300">점수 3배 (심화)</span>
+                        <span class="text-xs font-normal text-orange-300">틀리면 -5초</span>
                     </label>
                 </div>
             </div>
@@ -124,9 +121,8 @@
             </button>
         </div>
 
-        <!-- 게임 오버 스크린 오버레이 -->
         <div id="gameover-screen" class="absolute inset-0 bg-red-900/95 flex flex-col items-center justify-center p-6 text-center hidden z-30">
-            <h2 class="text-5xl text-white mb-2 animate-bounce">게임 오버 😭</h2>
+            <h2 class="text-5xl text-white mb-2 animate-bounce">⏱️ 시간 종료</h2>
             <p class="text-red-200 text-xl mb-6">최종 점수: <span id="final-score" class="text-yellow-300 font-bold">0</span>점</p>
             
             <div class="flex gap-4 w-full justify-center">
@@ -143,7 +139,7 @@
     <script>
         // --- 초대형 난이도별 단어 풀 데이터베이스 (총 150세트 완비) ---
         const difficultyWordPool = {
-            easy: [ // 기초 필수 단어 (50개)
+            easy: [
                 {word: "puppy", emoji: "🐶"}, {word: "cat", emoji: "🐱"}, {word: "lion", emoji: "🦁"}, 
                 {word: "tiger", emoji: "🐯"}, {word: "rabbit", emoji: "🐰"}, {word: "pig", emoji: "🐷"}, 
                 {word: "cow", emoji: "🐮"}, {word: "fox", emoji: "🦊"}, {word: "bear", emoji: "🐻"},
@@ -162,7 +158,7 @@
                 {word: "cloud", emoji: "☁️"}, {word: "fire", emoji: "🔥"}, {word: "clock", emoji: "⏰"},
                 {word: "key", emoji: "🔑"}, {word: "frog", emoji: "🐸"}
             ],
-            normal: [ // 초등 중급 일상 단어 (50개)
+            normal: [
                 {word: "monkey", emoji: "🐵"}, {word: "elephant", emoji: "🐘"}, {word: "giraffe", emoji: "🦒"}, 
                 {word: "penguin", emoji: "🐧"}, {word: "dolphin", emoji: "🐬"}, {word: "kangaroo", emoji: "🦘"}, 
                 {word: "turtle", emoji: "🐢"}, {word: "shark", emoji: "🦈"}, {word: "whale", emoji: "🐳"},
@@ -176,12 +172,12 @@
                 {word: "guitar", emoji: "🎸"}, {word: "piano", emoji: "🎹"}, {word: "lemon", emoji: "🍋"},
                 {word: "peach", emoji: "🍑"}, {word: "onion", emoji: "🧅"}, {word: "garlic", emoji: "🧄"},
                 {word: "honey", emoji: "🍯"}, {word: "donut", emoji: "🍩"}, {word: "truck", emoji: "🚚"},
-                {word: "mirror", emoji: "🪞"}, {word: "soap", emoji: "🧼"}, {word: "guitar", emoji: "🎸"},
-                {word: "drum", emoji: "🥁"}, {word: "crown", emoji: "👑"}, {word: "gift", emoji: "🎁"},
-                {word: "balloon", emoji: "🎈"}, {word: "scissors", emoji: "✂️"}, {word: "glasses", emoji: "👓"},
-                {word: "spider", emoji: "🕷️"}, {word: "robot", emoji: "🤖"}
+                {word: "mirror", emoji: "🪞"}, {word: "soap", emoji: "🧼"}, {word: "drum", emoji: "🥁"},
+                {word: "crown", emoji: "👑"}, {word: "gift", emoji: "🎁"}, {word: "balloon", emoji: "🎈"},
+                {word: "scissors", emoji: "✂️"}, {word: "glasses", emoji: "👓"}, {word: "spider", emoji: "🕷️"},
+                {word: "robot", emoji: "🤖"}
             ],
-            hard: [ // 심화 다음절 고급 단어 (50개)
+            hard: [
                 {word: "dinosaur", emoji: "🦖"}, {word: "crocodile", emoji: "🐊"}, {word: "leopard", emoji: "🐆"}, 
                 {word: "peacock", emoji: "🦚"}, {word: "squirrel", emoji: "🐿️"}, {word: "octopus", emoji: "🐙"}, 
                 {word: "jellyfish", emoji: "🪼"}, {word: "watermelon", emoji: "🍉"}, {word: "pineapple", emoji: "🍍"}, 
@@ -202,11 +198,12 @@
             ]
         };
 
-        // --- 오디오 합성 컴포넌트 ---
+        // --- 오디오 및 타이머 상태 변수 ---
         let audioCtx = null;
         let bgmIntervalId = null;
         let bgmNoteIndex = 0;
         let bgmEnabled = true;
+        let timerIntervalId = null;
 
         const bgmMelody = [
             329.63, 392.00, 523.25, 392.00, 440.00, 523.25, 392.00, 349.23,
@@ -214,6 +211,35 @@
             392.00, 440.00, 523.25, 587.33, 659.25, 523.25, 440.00, 392.00,
             349.23, 329.63, 293.66, 329.63, 261.63, 0,       261.63, 392.00
         ];
+
+        // --- 핵심 돔 노드 컴포넌트 ---
+        const scoreText = document.getElementById("score-text");
+        const levelText = document.getElementById("level-text");
+        const timeText = document.getElementById("time-text");
+        const timerBar = document.getElementById("timer-bar");
+        const statusDisplay = document.getElementById("status-display");
+        const pauseBtn = document.getElementById("pause-btn");
+        const pauseOverlay = document.getElementById("pause-overlay");
+        const startScreen = document.getElementById("start-screen");
+        const gameoverScreen = document.getElementById("gameover-screen");
+        const startLevelInput = document.getElementById("start-level-input");
+        const cardGrid = document.getElementById("card-grid");
+
+        let score = 0;
+        let level = 1;
+        let timeLeft = 0;
+        let maxTime = 0;
+        let gameActive = false;
+        let isPaused = false;
+
+        let selectedDifficulty = "easy";
+        let scoreMultiplier = 1;
+
+        let cards = [];
+        let flippedCards = [];
+        let matchedPairs = 0;
+        let totalPairs = 0;
+        let lockBoard = false;
 
         function initAudioCtx() {
             try {
@@ -228,13 +254,10 @@
         function startBgm() {
             if (!bgmEnabled || isPaused || !gameActive) return;
             if (bgmIntervalId) return;
-            initAudioCtx();
-            if (!audioCtx) return;
+            initAudioCtx(); if (!audioCtx) return;
 
             bgmIntervalId = setInterval(() => {
-                if (!gameActive || isPaused || !bgmEnabled || !audioCtx) {
-                    stopBgm(); return;
-                }
+                if (!gameActive || isPaused || !bgmEnabled || !audioCtx) { stopBgm(); return; }
                 try {
                     let freq = bgmMelody[bgmNoteIndex % bgmMelody.length];
                     bgmNoteIndex++;
@@ -263,7 +286,7 @@
             if (bgmEnabled) {
                 topBgmBtn.innerHTML = "🎵 음악 ON";
                 topBgmBtn.className = "text-sm bg-white hover:bg-purple-100 text-purple-700 font-bold px-2.5 py-1 rounded-xl border border-purple-300 shadow-sm transition active:scale-95 cursor-pointer whitespace-nowrap";
-                if (gameActive && !isPaused) startBgm();
+                if (gameActive && !isPaused && !lockBoard) startBgm();
             } else {
                 topBgmBtn.innerHTML = "🔇 음악 OFF";
                 topBgmBtn.className = "text-sm bg-white hover:bg-purple-100 text-gray-400 font-bold px-2.5 py-1 rounded-xl border border-gray-300 shadow-sm transition active:scale-95 cursor-pointer whitespace-nowrap";
@@ -278,66 +301,69 @@
 
                 if (type === 'match') {
                     const osc = audioCtx.createOscillator(); const gain = audioCtx.createGain();
-                    osc.type = 'sine';
-                    osc.frequency.setValueAtTime(523.25, now);
-                    osc.frequency.setValueAtTime(783.99, now + 0.08);
+                    osc.type = 'sine'; osc.frequency.setValueAtTime(523.25, now); osc.frequency.setValueAtTime(783.99, now + 0.08);
                     gain.gain.setValueAtTime(0.12, now); gain.gain.exponentialRampToValueAtTime(0.001, now + 0.25);
-                    osc.connect(gain); gain.connect(audioCtx.destination);
-                    osc.start(now); osc.stop(now + 0.25);
+                    osc.connect(gain); gain.connect(audioCtx.destination); osc.start(now); osc.stop(now + 0.25);
                 } else if (type === 'wrong') {
                     const osc = audioCtx.createOscillator(); const gain = audioCtx.createGain();
-                    osc.type = 'sawtooth';
-                    osc.frequency.setValueAtTime(261.63, now); osc.frequency.linearRampToValueAtTime(130.81, now + 0.2);
-                    gain.gain.setValueAtTime(0.1, now); gain.gain.exponentialRampToValueAtTime(0.001, now + 0.2);
-                    osc.connect(gain); gain.connect(audioCtx.destination);
-                    osc.start(now); osc.stop(now + 0.2);
+                    osc.type = 'sawtooth'; osc.frequency.setValueAtTime(261.63, now); osc.frequency.linearRampToValueAtTime(130.81, now + 0.2);
+                    gain.gain.setValueAtTime(0.12, now); gain.gain.exponentialRampToValueAtTime(0.001, now + 0.2);
+                    osc.connect(gain); gain.connect(audioCtx.destination); osc.start(now); osc.stop(now + 0.2);
                 } else if (type === 'fail') {
                     const osc = audioCtx.createOscillator(); const gain = audioCtx.createGain();
                     osc.type = 'sawtooth'; osc.frequency.setValueAtTime(200, now); osc.frequency.linearRampToValueAtTime(60, now + 0.4);
-                    gain.gain.setValueAtTime(0.15, now); gain.gain.exponentialRampToValueAtTime(0.001, now + 0.4);
-                    osc.connect(gain); gain.connect(audioCtx.destination);
-                    osc.start(now); osc.stop(now + 0.4);
+                    gain.gain.setValueAtTime(0.18, now); gain.gain.exponentialRampToValueAtTime(0.001, now + 0.4);
+                    osc.connect(gain); gain.connect(audioCtx.destination); osc.start(now); osc.stop(now + 0.4);
                 } else if (type === 'levelup') {
                     const notes = [523.25, 659.25, 783.99, 1046.50];
                     notes.forEach((f, idx) => {
                         const osc = audioCtx.createOscillator(); const g = audioCtx.createGain();
                         osc.type = 'square'; osc.frequency.setValueAtTime(f, now + idx * 0.06);
                         g.gain.setValueAtTime(0.06, now + idx * 0.06); g.gain.exponentialRampToValueAtTime(0.001, now + idx * 0.06 + 0.15);
-                        osc.connect(g); g.connect(audioCtx.destination);
-                        osc.start(now + idx * 0.06); osc.stop(now + idx * 0.06 + 0.15);
+                        osc.connect(g); g.connect(audioCtx.destination); osc.start(now + idx * 0.06); osc.stop(now + idx * 0.06 + 0.15);
                     });
                 }
             } catch(e) {}
         }
 
-        // --- 핵심 변수 및 스태틱 노드 컴포넌트 ---
-        const scoreText = document.getElementById("score-text");
-        const levelText = document.getElementById("level-text");
-        const hpContainer = document.getElementById("hp-container");
-        const statusDisplay = document.getElementById("status-display");
-        const pauseBtn = document.getElementById("pause-btn");
-        const pauseOverlay = document.getElementById("pause-overlay");
-        const startScreen = document.getElementById("start-screen");
-        const gameoverScreen = document.getElementById("gameover-screen");
-        const startLevelInput = document.getElementById("start-level-input");
-        const cardGrid = document.getElementById("card-grid");
+        // --- 실시간 타이머 엔진 구동부 ---
+        function startTimer() {
+            if (!gameActive || isPaused || lockBoard) return;
+            if (timerIntervalId) return;
 
-        let score = 0;
-        let level = 1;
-        let hp = 5;
-        let gameActive = false;
-        let isPaused = false;
+            timerIntervalId = setInterval(() => {
+                if (!gameActive || isPaused || lockBoard) { stopTimer(); return; }
+                
+                timeLeft--;
+                if (timeLeft <= 0) {
+                    timeLeft = 0;
+                    updateTimerUI();
+                    endGame();
+                } else {
+                    updateTimerUI();
+                }
+            }, 1000);
+        }
 
-        let selectedDifficulty = "easy";
-        let scoreMultiplier = 1;
+        function stopTimer() {
+            if (timerIntervalId) { clearInterval(timerIntervalId); timerIntervalId = null; }
+        }
 
-        let cards = [];
-        let flippedCards = [];
-        let matchedPairs = 0;
-        let totalPairs = 0;
-        let lockBoard = false;
+        function updateTimerUI() {
+            timeText.innerText = timeLeft;
+            if (maxTime > 0) {
+                const percentage = (timeLeft / maxTime) * 100;
+                timerBar.style.width = `${percentage}%`;
+                
+                // 시간이 25% 미만으로 떨어지면 경고 (붉은색 바 연출)
+                if (percentage < 25) {
+                    timerBar.className = "bg-red-500 h-full transition-all duration-300";
+                } else {
+                    timerBar.className = "bg-gradient-to-r from-red-500 to-fuchsia-500 h-full transition-all duration-300";
+                }
+            }
+        }
 
-        // --- 카드 객체 돔 엘리먼트 팩토리 ---
         function createCardElement(card, index) {
             const container = document.createElement("div");
             container.className = "perspective w-full h-full cursor-pointer aspect-[3/4] select-none";
@@ -367,9 +393,9 @@
             return container;
         }
 
-        // --- 게임 비즈니스 로직 제어부 ---
         function startGame() {
             initAudioCtx();
+            stopTimer();
             
             const diffRadio = document.querySelector('input[name="wordDifficulty"]:checked');
             selectedDifficulty = diffRadio ? diffRadio.value : "easy";
@@ -380,11 +406,9 @@
 
             score = 0;
             level = parseInt(startLevelInput.value) || 1;
-            hp = 5;
 
             scoreText.innerText = score;
             levelText.innerText = level;
-            updateHpDisplay();
 
             startScreen.classList.add("hidden");
             gameoverScreen.classList.add("hidden");
@@ -395,25 +419,25 @@
             pauseBtn.className = "px-5 bg-fuchsia-500 hover:bg-fuchsia-600 text-white font-bold rounded-xl shadow transition transform active:scale-95 cursor-pointer whitespace-nowrap";
 
             gameActive = true; bgmNoteIndex = 0;
-            if (bgmEnabled) startBgm();
-
+            
             buildRoundData();
         }
 
-        function updateHpDisplay() {
-            hpContainer.innerHTML = "";
-            for (let i = 0; i < 5; i++) hpContainer.innerHTML += (i < hp) ? "❤️" : "🤍";
-        }
-
         function buildRoundData() {
+            stopTimer();
             matchedPairs = 0; flippedCards = []; lockBoard = true;
 
-            if (level === 1) totalPairs = 3;       // 6장 (2x3)
-            else if (level === 2) totalPairs = 4;  // 8장 (2x4)
-            else if (level === 3) totalPairs = 6;  // 12장 (3x4)
-            else if (level === 4) totalPairs = 8;  // 16장 (4x4)
-            else if (level === 5) totalPairs = 10; // 20장 (4x5)
-            else totalPairs = 12;                  // 24장 (4x6)
+            if (level === 1) totalPairs = 3;       
+            else if (level === 2) totalPairs = 4;  
+            else if (level === 3) totalPairs = 6;  
+            else if (level === 4) totalPairs = 8;  
+            else if (level === 5) totalPairs = 10; 
+            else totalPairs = 12;                  
+
+            // 완벽히 계산된 유동적 제한시간 수식 설정
+            maxTime = 20 + (totalPairs * 5); 
+            timeLeft = maxTime;
+            updateTimerUI();
 
             cardGrid.innerHTML = "";
             cardGrid.className = "grid w-full h-full gap-2 justify-center items-center";
@@ -425,7 +449,6 @@
             else if (totalPairs === 10) cardGrid.classList.add("grid-cols-5");
             else cardGrid.classList.add("grid-cols-6");
 
-            // 지정된 난이도의 풀(50개)에서 무작위 셔플 후 필요한 쌍만큼 추출
             const targetPool = difficultyWordPool[selectedDifficulty];
             const poolCopy = [...targetPool].sort(() => Math.random() - 0.5);
             const roundPairs = poolCopy.slice(0, totalPairs);
@@ -449,11 +472,13 @@
         function triggerMemoryPreview() {
             lockBoard = true;
             statusDisplay.innerText = "👀 단어와 이모지를 빠르게 기억하세요!";
+            stopBgm();
             
             cards.forEach((_, idx) => {
                 document.getElementById(`card-inner-${idx}`).classList.add("flipped");
             });
 
+            // 프리뷰 찬스 타임 (2.5초간은 타이머가 흐르지 않음)
             setTimeout(() => {
                 if (!gameActive || isPaused) return;
                 cards.forEach((card, idx) => {
@@ -462,6 +487,9 @@
                 });
                 lockBoard = false;
                 statusDisplay.innerText = "🎯 알맞은 이모지와 영단어를 짝지어보세요!";
+                
+                if (bgmEnabled) startBgm();
+                startTimer(); // 프리뷰 조율이 끝난 후 공정하게 타이머 카운트 다운 개시!
             }, 2500);
         }
 
@@ -502,11 +530,18 @@
                     flippedCards = []; lockBoard = false;
 
                     if (matchedPairs === totalPairs) {
+                        stopTimer();
                         setTimeout(triggerLevelUp, 1000);
                     }
                 }, 300);
             } else {
-                statusDisplay.innerText = "❌ 다른 짝이에요! 카드가 다시 뒤집어집니다.";
+                // 오답 처리 및 시간 차등 패널티 감점 핵심 알고리즘
+                const penaltyTime = 2 + scoreMultiplier; // 쉬움 3초, 보통 4초, 어려움 5초 감점
+                timeLeft -= penaltyTime;
+                if (timeLeft < 0) timeLeft = 0;
+                updateTimerUI();
+
+                statusDisplay.innerText = `❌ 다른 짝이에요! 시간 감점 (-${penaltyTime}초)`;
                 playSound('wrong');
 
                 setTimeout(() => {
@@ -515,10 +550,14 @@
                     first.card.isFlipped = false;
                     second.card.isFlipped = false;
 
-                    hp--; updateHpDisplay();
                     flippedCards = []; lockBoard = false;
 
-                    if (hp <= 0) endGame();
+                    if (timeLeft <= 0) {
+                        endGame();
+                    } else {
+                        // 감점 폭탄을 맞고 게임이 활성화 중이면 타이머 재수행 재조율
+                        startTimer();
+                    }
                 }, 1100);
             }
         }
@@ -532,11 +571,12 @@
         }
 
         function togglePause() {
-            if (!gameActive) return;
+            if (!gameActive || lockBoard) return;
             isPaused = !isPaused;
 
             if (isPaused) {
                 stopBgm();
+                stopTimer();
                 pauseOverlay.classList.remove("hidden");
                 pauseBtn.innerHTML = "▶️ 이어하기";
                 pauseBtn.className = "px-4 py-3 bg-emerald-500 hover:bg-emerald-600 text-white font-bold rounded-xl shadow transition transform active:scale-95 cursor-pointer whitespace-nowrap";
@@ -545,25 +585,28 @@
                 pauseBtn.innerHTML = "⏸️ 일시정지";
                 pauseBtn.className = "px-4 py-3 bg-fuchsia-500 hover:bg-fuchsia-600 text-white font-bold rounded-xl shadow transition transform active:scale-95 cursor-pointer whitespace-nowrap";
                 if (bgmEnabled) startBgm();
+                startTimer();
             }
         }
 
         function endGame() {
-            gameActive = false; pauseBtn.disabled = true; stopBgm();
+            gameActive = false; pauseBtn.disabled = true; 
+            stopBgm(); stopTimer();
             document.getElementById("final-score").innerText = score;
             gameoverScreen.classList.remove("hidden");
             playSound('fail');
         }
 
-        // --- 리스너 조율 바인딩 ---
+        // --- 리스너 바인딩 부 ---
         document.getElementById("start-btn").addEventListener("click", startGame);
         document.getElementById("restart-btn").addEventListener("click", startGame);
         document.getElementById("home-btn").addEventListener("click", () => {
+            stopTimer(); stopBgm(); gameActive = false;
             gameoverScreen.classList.add("hidden");
             startScreen.classList.remove("hidden");
         });
         pauseBtn.addEventListener("click", togglePause);
-        bgmTopToggle.addEventListener("click", toggleBgm);
+        document.getElementById("bgm-top-toggle").addEventListener("click", toggleBgm);
     </script>
 </body>
 </html>
