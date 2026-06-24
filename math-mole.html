@@ -1,0 +1,756 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>말랑말랑 계산 두더지 🔨</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Jua&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Jua', sans-serif;
+            user-select: none;
+        }
+        input[type="number"]::-webkit-inner-spin-button,
+        input[type="number"]::-webkit-outer-spin-button {
+            opacity: 1;
+        }
+    </style>
+</head>
+<body class="bg-amber-50 h-screen w-screen flex items-center justify-center overflow-hidden p-4">
+
+    <div class="bg-white p-5 rounded-3xl shadow-2xl w-full max-w-xl border-4 border-amber-200 relative overflow-hidden flex flex-col my-auto">
+        
+        <div class="flex justify-between items-center mb-3 bg-amber-50 p-3 rounded-2xl gap-2">
+            <div class="text-base text-amber-800 whitespace-nowrap">
+                ⭐ 점수: <span id="score-text" class="text-lg font-bold text-orange-500">0</span>
+            </div>
+            <div class="text-base text-amber-800 bg-white px-2.5 py-0.5 rounded-full border-2 border-amber-200 animate-bounce whitespace-nowrap">
+                ✨ 레벨: <span id="level-text" class="font-bold text-amber-600">1</span>
+            </div>
+            <button id="bgm-top-toggle" class="text-sm bg-white hover:bg-amber-100 text-amber-700 font-bold px-2.5 py-1 rounded-xl border border-amber-300 shadow-sm transition active:scale-95 cursor-pointer whitespace-nowrap">
+                🎵 음악 ON
+            </button>
+            <div class="flex items-center gap-0.5" id="hp-container">
+                ❤️❤️❤️❤️❤️
+            </div>
+        </div>
+
+        <div class="relative bg-gradient-to-b from-green-200 to-emerald-100 rounded-2xl overflow-hidden border-4 border-emerald-400">
+            <canvas id="gameCanvas" width="600" height="420" class="w-full h-auto block"></canvas>
+            
+            <div id="pause-overlay" class="absolute inset-0 bg-emerald-950/60 hidden flex flex-col items-center justify-center z-5">
+                <div class="bg-white border-4 border-emerald-400 p-5 rounded-2xl text-center shadow-2xl max-w-xs">
+                    <p class="text-emerald-700 text-2xl font-bold mb-2">⏸️ 일시정지 중</p>
+                    <p class="text-emerald-500 text-sm">잠시 머리를 식히는 중이에요.<br>'이어하기' 버튼을 누르면 다시 시작해요!</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="mt-3 flex gap-2">
+            <div id="question-display" class="flex-1 bg-amber-100 border-2 border-amber-300 rounded-xl py-2.5 text-center text-2xl font-bold text-amber-900 shadow-inner">
+                문제를 기다리는 중...
+            </div>
+            <button id="pause-btn" class="px-5 bg-orange-500 hover:bg-orange-600 text-white font-bold rounded-xl shadow transition transform active:scale-95 whitespace-nowrap cursor-pointer">
+                ⏸️ 일시정지
+            </button>
+        </div>
+
+        <div id="start-screen" class="absolute inset-0 bg-emerald-900/95 flex flex-col items-center justify-center p-6 text-center transition-all duration-500 z-10 overflow-y-auto">
+            <h1 class="text-4xl text-white mb-1 drop-shadow-lg">말랑말랑 계산 두더지 🔨</h1>
+            <p class="text-emerald-200 mb-4 text-sm">정답을 들고 있는 두더지를 뿅망치로 빠르게 맞추세요!</p>
+            
+            <div class="mb-3 bg-white/10 p-3 rounded-2xl border border-white/20 w-full max-w-sm text-center">
+                <span class="block text-yellow-300 text-sm mb-2 font-bold">🧮 연산 종류 선택</span>
+                <div class="grid grid-cols-3 gap-2 text-white font-bold text-sm">
+                    <label class="flex items-center justify-center gap-1 cursor-pointer bg-white/5 p-1.5 rounded-xl hover:bg-white/10">
+                        <input type="radio" name="opSelect" value="+" checked class="accent-orange-500"> 덧셈 (+)
+                    </label>
+                    <label class="flex items-center justify-center gap-1 cursor-pointer bg-white/5 p-1.5 rounded-xl hover:bg-white/10">
+                        <input type="radio" name="opSelect" value="-"> 뺄셈 (-)
+                    </label>
+                    <label class="flex items-center justify-center gap-1 cursor-pointer bg-white/5 p-1.5 rounded-xl hover:bg-white/10">
+                        <input type="radio" name="opSelect" value="*"> 곱셈 (×)
+                    </label>
+                    <label class="flex items-center justify-center gap-1 cursor-pointer bg-white/5 p-1.5 rounded-xl hover:bg-white/10">
+                        <input type="radio" name="opSelect" value="/"> 나눗셈 (÷)
+                    </label>
+                    <label class="flex items-center justify-center gap-1 cursor-pointer bg-white/5 p-1.5 rounded-xl hover:bg-white/10 col-span-2">
+                        <input type="radio" name="opSelect" value="mixed"> 섞어서 전체종합 ⚡
+                    </label>
+                </div>
+            </div>
+
+            <div class="mb-3 bg-white/10 p-3 rounded-2xl border border-white/20 w-full max-w-sm text-center">
+                <span class="block text-yellow-300 text-sm mb-2 font-bold">🕳️ 두더지 수 (난이도)</span>
+                <div class="flex justify-around text-white font-bold text-sm">
+                    <label class="flex items-center gap-1.5 cursor-pointer">
+                        <input type="radio" name="moleCountSelect" value="3" class="w-4 h-4 accent-orange-500"> 3마리
+                    </label>
+                    <label class="flex items-center gap-1.5 cursor-pointer">
+                        <input type="radio" name="moleCountSelect" value="5" checked class="w-4 h-4 accent-orange-500"> 5마리
+                    </label>
+                    <label class="flex items-center gap-1.5 cursor-pointer">
+                        <input type="radio" name="moleCountSelect" value="9" class="w-4 h-4 accent-orange-500"> 9마리 (헬)
+                    </label>
+                </div>
+            </div>
+
+            <div class="mb-3 w-full max-w-sm flex flex-col gap-2">
+                <label class="inline-flex items-center justify-center gap-2 bg-white/10 w-full px-4 py-2 rounded-2xl border border-white/20 text-white cursor-pointer hover:bg-white/20 transition">
+                    <input type="checkbox" id="bgm-checkbox" checked class="w-5 h-5 accent-emerald-400 rounded">
+                    <span class="text-sm font-bold text-emerald-300">🎵 익살스러운 아케이드 BGM 켜기</span>
+                </label>
+            </div>
+            
+            <div class="mb-4 bg-white/10 p-3 rounded-2xl border border-white/20 w-full max-w-sm flex items-center justify-center gap-3">
+                <label for="start-level-input" class="text-yellow-300 text-sm font-bold">🎯 시작 레벨:</label>
+                <input type="number" id="start-level-input" min="1" value="1" 
+                       class="w-20 px-2 py-0.5 rounded-xl border-2 border-emerald-400 text-emerald-950 font-bold bg-white text-base text-center focus:outline-none shadow-md">
+            </div>
+
+            <button id="start-btn" class="px-8 py-3 bg-gradient-to-r from-orange-500 to-yellow-500 text-white font-bold text-xl rounded-2xl shadow-lg hover:from-orange-600 hover:to-yellow-600 transform hover:scale-105 transition active:scale-95 cursor-pointer">
+                게임 시작하기 🎮
+            </button>
+        </div>
+
+        <div id="gameover-screen" class="absolute inset-0 bg-red-900/95 flex flex-col items-center justify-center p-6 text-center hidden z-10">
+            <h2 class="text-5xl text-white mb-2 animate-bounce">게임 오버 😭</h2>
+            <p class="text-red-200 text-xl mb-6">최종 점수: <span id="final-score" class="text-yellow-300 font-bold">0</span>점</p>
+            
+            <div class="flex gap-4 w-full justify-center">
+                <button id="restart-btn" class="px-5 py-3 bg-white text-red-600 font-bold text-lg rounded-2xl shadow-lg hover:bg-red-50 transform hover:scale-105 transition active:scale-95 cursor-pointer">
+                    다시 도전하기 🔄
+                </button>
+                <button id="home-btn" class="px-5 py-3 bg-amber-600 text-white font-bold text-lg rounded-2xl shadow-lg hover:bg-amber-700 transform hover:scale-105 transition active:scale-95 cursor-pointer">
+                    처음 화면으로 🏠
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // --- 오디오 엔진 예외 방어형 설계 ---
+        let audioCtx = null;
+        let bgmIntervalId = null;
+        let bgmNoteIndex = 0;
+        let bgmEnabled = true;
+
+        const bgmMelody = [
+            293.66, 349.23, 440.00, 349.23, 392.00, 493.88, 587.33, 493.88,
+            329.63, 392.00, 493.88, 392.00, 440.00, 523.25, 659.25, 523.25,
+            392.00, 440.00, 493.88, 587.33, 349.23, 392.00, 440.00, 523.25,
+            293.66, 392.00, 587.33, 493.88, 440.00, 392.00, 349.23, 293.66
+        ];
+
+        function initAudioCtx() {
+            try {
+                if (!audioCtx) {
+                    const AudioContextClass = window.AudioContext || window.webkitAudioContext;
+                    if (AudioContextClass) {
+                        audioCtx = new AudioContextClass();
+                    }
+                }
+                if (audioCtx && audioCtx.state === 'suspended') {
+                    audioCtx.resume();
+                }
+            } catch (e) {
+                console.warn("오디오 컨텍스트 초기화 실패 (사운드 미지원 환경):", e);
+            }
+        }
+
+        function startBgm() {
+            if (!bgmEnabled || isPaused || !gameActive) return;
+            if (bgmIntervalId) return;
+
+            initAudioCtx();
+            if (!audioCtx) return;
+
+            bgmIntervalId = setInterval(() => {
+                if (!gameActive || isPaused || !bgmEnabled || !audioCtx) {
+                    stopBgm();
+                    return;
+                }
+                
+                try {
+                    let freq = bgmMelody[bgmNoteIndex % bgmMelody.length];
+                    bgmNoteIndex++;
+
+                    let osc = audioCtx.createOscillator();
+                    let gainNode = audioCtx.createGain();
+                    
+                    osc.type = 'square';
+                    osc.frequency.setValueAtTime(freq, audioCtx.currentTime);
+                    
+                    gainNode.gain.setValueAtTime(0.012, audioCtx.currentTime);
+                    gainNode.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.15);
+                    
+                    osc.connect(gainNode);
+                    gainNode.connect(audioCtx.destination);
+                    
+                    osc.start();
+                    osc.stop(audioCtx.currentTime + 0.18);
+                } catch(e) {
+                    console.warn("BGM 노드 재생 실패:", e);
+                }
+            }, 180);
+        }
+
+        function stopBgm() {
+            if (bgmIntervalId) {
+                clearInterval(bgmIntervalId);
+                bgmIntervalId = null;
+            }
+        }
+
+        function toggleBgm() {
+            bgmEnabled = !bgmEnabled;
+            const topBgmBtn = document.getElementById("bgm-top-toggle");
+            const startBgmCheckbox = document.getElementById("bgm-checkbox");
+
+            if (bgmEnabled) {
+                topBgmBtn.innerHTML = "🎵 음악 ON";
+                topBgmBtn.classList.replace("text-gray-400", "text-amber-700");
+                if(startBgmCheckbox) startBgmCheckbox.checked = true;
+                if (gameActive && !isPaused) startBgm();
+            } else {
+                topBgmBtn.innerHTML = "🔇 음악 OFF";
+                topBgmBtn.classList.replace("text-amber-700", "text-gray-400");
+                if(startBgmCheckbox) startBgmCheckbox.checked = false;
+                stopBgm();
+            }
+        }
+
+        function playSound(type) {
+            try {
+                initAudioCtx();
+                if (!audioCtx) return;
+
+                const now = audioCtx.currentTime;
+
+                if (type === 'match') {
+                    const osc1 = audioCtx.createOscillator();
+                    const osc2 = audioCtx.createOscillator();
+                    const gain = audioCtx.createGain();
+                    
+                    osc1.type = 'sawtooth'; osc1.frequency.setValueAtTime(150, now);
+                    osc1.frequency.exponentialRampToValueAtTime(600, now + 0.1);
+                    
+                    osc2.type = 'sine'; osc2.frequency.setValueAtTime(600, now);
+                    osc2.frequency.exponentialRampToValueAtTime(1200, now + 0.15);
+
+                    gain.gain.setValueAtTime(0.18, now);
+                    gain.gain.exponentialRampToValueAtTime(0.001, now + 0.18);
+                    
+                    osc1.connect(gain); osc2.connect(gain);
+                    gain.connect(audioCtx.destination);
+                    osc1.start(now); osc1.stop(now + 0.18);
+                    osc2.start(now); osc2.stop(now + 0.18);
+
+                } else if (type === 'wrong') {
+                    const osc = audioCtx.createOscillator();
+                    const gain = audioCtx.createGain();
+                    osc.connect(gain); gain.connect(audioCtx.destination);
+                    
+                    osc.type = 'sawtooth';
+                    osc.frequency.setValueAtTime(280, now);
+                    osc.frequency.linearRampToValueAtTime(90, now + 0.25);
+                    
+                    gain.gain.setValueAtTime(0.12, now);
+                    gain.gain.exponentialRampToValueAtTime(0.001, now + 0.25);
+                    
+                    osc.start(now); osc.stop(now + 0.25);
+
+                } else if (type === 'fail') {
+                    const osc = audioCtx.createOscillator();
+                    const gain = audioCtx.createGain();
+                    osc.connect(gain); gain.connect(audioCtx.destination);
+                    
+                    osc.type = 'triangle';
+                    osc.frequency.setValueAtTime(440, now);
+                    osc.frequency.setValueAtTime(330, now + 0.08);
+                    osc.frequency.setValueAtTime(220, now + 0.16);
+                    
+                    gain.gain.setValueAtTime(0.15, now);
+                    gain.gain.exponentialRampToValueAtTime(0.001, now + 0.24);
+                    
+                    osc.start(now); osc.stop(now + 0.24);
+
+                } else if (type === 'levelup') {
+                    const notes = [523.25, 659.25, 783.99, 1046.50, 1567.98]; 
+                    notes.forEach((freq, index) => {
+                        const osc = audioCtx.createOscillator();
+                        const noteGain = audioCtx.createGain();
+                        
+                        osc.type = 'square';
+                        osc.frequency.setValueAtTime(freq, now + index * 0.06);
+                        
+                        noteGain.gain.setValueAtTime(0, now + index * 0.06);
+                        noteGain.gain.linearRampToValueAtTime(0.08, now + index * 0.06 + 0.01);
+                        noteGain.gain.exponentialRampToValueAtTime(0.001, now + index * 0.06 + 0.25);
+                        
+                        osc.connect(noteGain); noteGain.connect(audioCtx.destination);
+                        osc.start(now + index * 0.06); osc.stop(now + index * 0.06 + 0.25);
+                    });
+                }
+            } catch (e) { console.warn(e); }
+        }
+
+        // --- 엔진 및 UI 컴포넌트 레퍼런스 설정 ---
+        const canvas = document.getElementById("gameCanvas");
+        const ctx = canvas.getContext("2d");
+        const scoreText = document.getElementById("score-text");
+        const levelText = document.getElementById("level-text");
+        const hpContainer = document.getElementById("hp-container");
+        const questionDisplay = document.getElementById("question-display");
+        const pauseBtn = document.getElementById("pause-btn");
+        const pauseOverlay = document.getElementById("pause-overlay");
+        const startScreen = document.getElementById("start-screen");
+        const gameoverScreen = document.getElementById("gameover-screen");
+        const startLevelInput = document.getElementById("start-level-input");
+        const bgmTopToggle = document.getElementById("bgm-top-toggle");
+
+        let score = 0; let level = 1; let hp = 5;
+        let gameActive = false; let isPaused = false;
+        
+        let currentOperation = "+"; 
+        let maxMoleCount = 5;       
+        
+        let currentQuestion = { text: "", answer: 0 };
+        let moles = [];             
+        let roundDuration = 15000;   
+        let roundTimer = 0;         
+        let particles = [];         
+        let activeHammers = [];     
+
+        let clouds = [];
+        for(let i=0; i<3; i++) {
+            clouds.push({ x: Math.random() * canvas.width, y: Math.random() * 50 + 20, speed: Math.random() * 0.08 + 0.03, size: Math.random() * 20 + 15 });
+        }
+
+        class HitParticle {
+            constructor(x, y, color) {
+                this.x = x; this.y = y; this.size = Math.random() * 5 + 3;
+                this.speedX = Math.random() * 6 - 3; this.speedY = Math.random() * -5 - 2;
+                this.gravity = 0.2; this.color = color; this.alpha = 1;
+            }
+            update() { this.x += this.speedX; this.y += this.speedY; this.speedY += this.gravity; this.alpha -= 0.04; }
+            draw() {
+                ctx.save(); ctx.globalAlpha = this.alpha; ctx.fillStyle = this.color;
+                ctx.beginPath(); ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2); ctx.fill();
+                ctx.restore();
+            }
+        }
+
+        // --- [요청사항 반영] 수학 문제 생성기 기능 변경 ---
+        function generateMathQuestion(op, lvl) {
+            let n1, n2, ans, symbol;
+            
+            let chosenOp = op;
+            if (op === 'mixed') {
+                const availableOps = ['+', '-', '*', '/'];
+                chosenOp = availableOps[Math.floor(Math.random() * availableOps.length)];
+            }
+
+            if (chosenOp === '+') {
+                // 덧셈: 두 숫자 모두 무조건 한 자리 수 (1 ~ 9)
+                n1 = Math.floor(Math.random() * 9) + 1;
+                n2 = Math.floor(Math.random() * 9) + 1;
+                ans = n1 + n2;
+                symbol = "+";
+            } else if (chosenOp === '-') {
+                // 뺄셈: 문제 숫자 하나(뒤쪽 n2)와 답(ans)이 무조건 한 자리 수, 음수 배제
+                ans = Math.floor(Math.random() * 10);     // 정답: 0 ~ 9 (한 자리 수)
+                n2 = Math.floor(Math.random() * 9) + 1;   // 빼는 수: 1 ~ 9 (한 자리 수)
+                n1 = ans + n2;                             // 앞의 수는 자동 계산 (예: 14 - 5 = 9)
+                symbol = "-";
+            } else if (chosenOp === '*') {
+                // 곱셈: 두 숫자 모두 무조건 한 자리 수 (1 ~ 9)
+                n1 = Math.floor(Math.random() * 9) + 1;
+                n2 = Math.floor(Math.random() * 9) + 1;
+                ans = n1 * n2;
+                symbol = "×";
+            } else { 
+                // 나눗셈: 문제 숫자 하나(나누는 수 n2)와 답(ans)이 무조건 한 자리 수, 소수 배제
+                ans = Math.floor(Math.random() * 9) + 1;   // 정답: 1 ~ 9 (한 자리 수)
+                n2 = Math.floor(Math.random() * 9) + 1;   // 나누는 수: 1 ~ 9 (한 자리 수)
+                n1 = ans * n2;                             // 나누어지는 수는 자동 계산 (예: 32 ÷ 4 = 8)
+                symbol = "÷";
+            }
+
+            return { text: `${n1} ${symbol} ${n2} = ?`, answer: ans };
+        }
+
+        function buildRoundData() {
+            currentQuestion = generateMathQuestion(currentOperation, level);
+            questionDisplay.innerText = currentQuestion.text;
+
+            let spots = [];
+            if (maxMoleCount === 3) {
+                spots = [{x: 150, y: 240}, {x: 300, y: 240}, {x: 450, y: 240}];
+            } else if (maxMoleCount === 5) {
+                spots = [
+                    {x: 200, y: 180}, {x: 400, y: 180},
+                    {x: 130, y: 310}, {x: 300, y: 310}, {x: 470, y: 310}
+                ];
+            } else { 
+                spots = [
+                    {x: 140, y: 150}, {x: 300, y: 150}, {x: 460, y: 150},
+                    {x: 140, y: 240}, {x: 300, y: 240}, {x: 460, y: 240},
+                    {x: 140, y: 330}, {x: 300, y: 330}, {x: 460, y: 330}
+                ];
+            }
+
+            let incorrectSet = new Set();
+            while (incorrectSet.size < maxMoleCount - 1) {
+                let candidate;
+                // 정답이 작은 경우(뺄셈/나눗셈 등 정답이 0~9일 때) 오답 생성 범위 제한 및 음수 방지
+                if (currentQuestion.answer <= 10) {
+                    candidate = Math.floor(Math.random() * 20); // 0 ~ 19 사이의 안전한 정수 오답
+                } else {
+                    let variance = Math.floor(Math.random() * 19) - 9; 
+                    candidate = currentQuestion.answer + variance;
+                }
+                
+                // 음수가 아니면서 정답이 아닌 유일한 값만 선택
+                if (candidate >= 0 && candidate !== currentQuestion.answer && !incorrectSet.has(candidate)) {
+                    incorrectSet.add(candidate);
+                }
+            }
+            let wrongValues = Array.from(incorrectSet);
+            let rightIndex = Math.floor(Math.random() * maxMoleCount);
+
+            moles = spots.map((spot, i) => {
+                let isRight = (i === rightIndex);
+                let val = isRight ? currentQuestion.answer : wrongValues.pop();
+                return {
+                    x: spot.x, y: spot.y,
+                    value: val, isCorrect: isRight,
+                    state: 'rise', progress: 0, 
+                    whacked: false, whackedTimer: 0,
+                    isPendingHit: false 
+                };
+            });
+
+            roundDuration = Math.max(3000, 16000 - (level * 1000));
+            roundTimer = roundDuration;
+        }
+
+        // --- 메인 게임 루프 ---
+        function gameLoop(timestamp) {
+            if (!gameActive) return;
+            if (isPaused) { requestAnimationFrame(gameLoop); return; }
+
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+            clouds.forEach(cloud => {
+                cloud.x += cloud.speed; if (cloud.x > canvas.width + 30) cloud.x = -30;
+                ctx.fillStyle = "rgba(255, 255, 255, 0.55)";
+                ctx.beginPath(); ctx.arc(cloud.x, cloud.y, cloud.size, 0, Math.PI * 2); ctx.fill();
+            });
+
+            let isAnyHammerSwinging = moles.some(m => m.isPendingHit);
+            if (!isAnyHammerSwinging) {
+                roundTimer -= 16.67; 
+                if (roundTimer <= 0) {
+                    hp--; updateHpDisplay(); playSound('fail');
+                    if (hp <= 0) { endGame(); return; }
+                    buildRoundData();
+                }
+            }
+
+            let ratio = roundTimer / roundDuration;
+            ctx.fillStyle = "rgba(0, 0, 0, 0.15)";
+            ctx.fillRect(15, 15, canvas.width - 30, 14);
+            let timerColor = "#34D399";
+            if (ratio < 0.3) timerColor = "#EF4444";
+            else if (ratio < 0.6) timerColor = "#F59E0B";
+            ctx.fillStyle = timerColor;
+            ctx.fillRect(15, 15, (canvas.width - 30) * ratio, 14);
+
+            // 구멍 그림자
+            moles.forEach(m => {
+                ctx.save();
+                ctx.fillStyle = "#1E3A8A"; ctx.globalAlpha = 0.25;
+                ctx.beginPath(); ctx.ellipse(m.x, m.y + 12, 42, 16, 0, 0, Math.PI * 2); ctx.fill();
+                ctx.restore();
+            });
+
+            // 두더지 그리기
+            moles.forEach(m => {
+                if (m.state === 'rise') {
+                    m.progress += 0.08; if (m.progress >= 1) { m.progress = 1; m.state = 'idle'; }
+                } else if (m.state === 'hide') {
+                    m.progress -= 0.1; if (m.progress <= 0) { m.progress = 0; }
+                }
+
+                if (m.whacked) {
+                    m.whackedTimer -= 16.67;
+                    if (m.whackedTimer <= 0) m.whacked = false;
+                }
+
+                let offsetHeight = 55 * m.progress; 
+
+                ctx.save();
+                ctx.beginPath();
+                ctx.rect(m.x - 50, m.y - 70, 100, 75 + 12);
+                ctx.clip();
+
+                let moleY = m.y + 12 - offsetHeight;
+                ctx.fillStyle = m.whacked ? "#EF4444" : "#B45309"; 
+                ctx.beginPath();
+                ctx.arc(m.x, moleY + 15, 30, Math.PI, 0, false);
+                ctx.ellipse(m.x, m.y + 20 - offsetHeight, 30, 25, 0, 0, Math.PI * 2);
+                ctx.fill();
+
+                ctx.fillStyle = "#FFFFFF";
+                ctx.beginPath(); ctx.arc(m.x - 10, moleY + 5, 4, 0, Math.PI * 2); ctx.arc(m.x + 10, moleY + 5, 4, 0, Math.PI * 2); ctx.fill();
+                ctx.fillStyle = "#000000";
+                ctx.beginPath(); ctx.arc(m.x - 10, moleY + 5, 2, 0, Math.PI * 2); ctx.arc(m.x + 10, moleY + 5, 2, 0, Math.PI * 2); ctx.fill();
+                ctx.fillStyle = "#F472B6";
+                ctx.beginPath(); ctx.arc(m.x, moleY + 12, 5, 0, Math.PI * 2); ctx.fill();
+
+                ctx.restore();
+
+                ctx.fillStyle = "#047857";
+                ctx.beginPath(); ctx.ellipse(m.x, m.y + 15, 36, 10, 0, 0, Math.PI * 2); ctx.fill();
+
+                if (m.progress > 0.3) {
+                    ctx.save();
+                    ctx.globalAlpha = (m.progress - 0.3) / 0.7;
+                    
+                    let moleTopY = m.y + 12 - offsetHeight - 15; 
+                    let bubbleY = moleTopY - 35; 
+
+                    ctx.fillStyle = "#FFFBEB"; 
+                    ctx.strokeStyle = "#F59E0B"; 
+                    ctx.lineWidth = 3;
+
+                    ctx.font = "bold 18px 'Jua'";
+                    let txtWidth = ctx.measureText(m.value).width;
+                    let bW = Math.max(44, txtWidth + 18);
+                    let bH = 28;
+
+                    roundRect(ctx, m.x - bW/2, bubbleY, bW, bH, 10, true, true);
+
+                    ctx.fillStyle = "#B45309";
+                    ctx.textAlign = "center";
+                    ctx.fillText(m.value, m.x, bubbleY + 20);
+                    ctx.restore();
+                }
+            });
+
+            // 망치 타격 애니메이션
+            for (let i = activeHammers.length - 1; i >= 0; i--) {
+                let h = activeHammers[i];
+                h.progress += 0.15; 
+                
+                let offsetHeight = 55 * h.mole.progress;
+                let currentX = h.mole.x;
+                let currentY = h.mole.y + 12 - offsetHeight;
+
+                if (h.progress >= 1) {
+                    let m = h.mole;
+                    m.whacked = true;
+                    m.whackedTimer = 250;
+                    m.isPendingHit = false;
+
+                    if (h.isCorrect) {
+                        let gainedScore = 2;
+                        if (h.timeRatio > 0.65) gainedScore = 4;      
+                        else if (h.timeRatio > 0.35) gainedScore = 3; 
+                        
+                        score += gainedScore;
+                        scoreText.innerText = score;
+                        playSound('match');
+
+                        for (let p = 0; p < 15; p++) {
+                            particles.push(new HitParticle(currentX, currentY - 10, "#F59E0B"));
+                        }
+
+                        checkLevelUp();
+                        setTimeout(() => { if(gameActive && !isPaused) buildRoundData(); }, 200);
+                    } else {
+                        playSound('wrong');
+                        hp--; updateHpDisplay();
+                        
+                        for (let p = 0; p < 10; p++) {
+                            particles.push(new HitParticle(currentX, currentY - 10, "#EF4444"));
+                        }
+                        if (hp <= 0) { endGame(); }
+                    }
+                    activeHammers.splice(i, 1);
+                } else {
+                    ctx.save();
+                    let pivotX = currentX + 72; 
+                    let pivotY = currentY - 20;
+                    ctx.translate(pivotX, pivotY);
+
+                    let angle = -Math.PI / 2 - (h.progress * Math.PI / 2);
+                    ctx.rotate(angle);
+
+                    ctx.fillStyle = "#B45309"; 
+                    ctx.fillRect(0, -3, 60, 6);
+                    
+                    ctx.fillStyle = "#EF4444"; 
+                    roundRect(ctx, 60, -22, 22, 44, 6, true, false);
+                    
+                    ctx.fillStyle = "#FBBF24"; 
+                    ctx.fillRect(62, -25, 18, 4);
+                    ctx.fillRect(62, 21, 18, 4);
+
+                    ctx.restore();
+                }
+            }
+
+            for (let i = particles.length - 1; i >= 0; i--) {
+                particles[i].update(); particles[i].draw();
+                if (particles[i].alpha <= 0) particles.splice(i, 1);
+            }
+
+            requestAnimationFrame(gameLoop);
+        }
+
+        function roundRect(ctx, x, y, width, height, radius, fill, stroke) {
+            ctx.beginPath(); ctx.moveTo(x + radius, y); ctx.lineTo(x + width - radius, y);
+            ctx.quadraticCurveTo(x + width, y, x + width, y + radius); ctx.lineTo(x + width, y + height - radius);
+            ctx.quadraticCurveTo(x + width, y + height, x + width - radius, y + height); ctx.lineTo(x + radius, y + height);
+            ctx.quadraticCurveTo(x, y + height, x, y + height - radius); ctx.lineTo(x, y + radius);
+            ctx.quadraticCurveTo(x, y, x + radius, y); ctx.closePath();
+            if (fill) ctx.fill(); if (stroke) ctx.stroke();
+        }
+
+        // --- 마우스 타격 판정 ---
+        canvas.addEventListener("mousedown", function(e) {
+            if (!gameActive || isPaused) return;
+
+            const rect = canvas.getBoundingClientRect();
+            const clickX = (e.clientX - rect.left) * (canvas.width / rect.width);
+            const clickY = (e.clientY - rect.top) * (canvas.height / rect.height);
+
+            for (let i = 0; i < moles.length; i++) {
+                let m = moles[i];
+                if (m.progress < 0.5 || m.whacked || m.isPendingHit) continue; 
+
+                let dist = Math.hypot(clickX - m.x, clickY - (m.y - 15));
+                if (dist < 40) { 
+                    m.isPendingHit = true; 
+
+                    activeHammers.push({
+                        mole: m,
+                        progress: 0,
+                        isCorrect: m.isCorrect,
+                        value: m.value,
+                        timeRatio: roundTimer / roundDuration 
+                    });
+                    break; 
+                }
+            }
+        });
+
+        function checkLevelUp() {
+            let targetLevel = Math.floor(score / 80) + 1; 
+            if (targetLevel > level) {
+                level = targetLevel; levelText.innerText = level;
+                playSound('levelup');
+                hp = Math.min(5, hp + 1); 
+                updateHpDisplay();
+            }
+        }
+
+        function updateHpDisplay() {
+            let hearts = "";
+            for (let i = 0; i < 5; i++) {
+                if (i < hp) {
+                    hearts += `<span class="text-2xl text-red-500 drop-shadow-sm select-none">❤️</span>`;
+                } else {
+                    hearts += `<span class="text-2xl opacity-20 filter grayscale select-none">❤️</span>`;
+                }
+            }
+            hpContainer.innerHTML = hearts;
+        }
+
+        function togglePause() {
+            if (!gameActive) return;
+            isPaused = !isPaused;
+
+            if (isPaused) {
+                pauseBtn.innerHTML = "▶️ 이어하기";
+                pauseBtn.classList.replace("bg-orange-500", "bg-green-500");
+                pauseBtn.classList.replace("hover:bg-orange-600", "hover:bg-green-600");
+                pauseOverlay.classList.remove("hidden");
+                stopBgm(); 
+            } else {
+                pauseOverlay.classList.add("hidden");
+                pauseBtn.innerHTML = "⏸️ 일시정지";
+                pauseBtn.classList.replace("bg-green-500", "bg-orange-500");
+                pauseBtn.classList.replace("hover:bg-green-600", "hover:bg-orange-600");
+                if (bgmEnabled) startBgm(); 
+            }
+        }
+
+        function startGame() {
+            initAudioCtx();
+
+            const opInput = document.querySelector('input[name="opSelect"]:checked');
+            currentOperation = opInput ? opInput.value : "+";
+            
+            const moleCountInput = document.querySelector('input[name="moleCountSelect"]:checked');
+            maxMoleCount = moleCountInput ? parseInt(moleCountInput.value) : 5;
+            
+            const bgmCheck = document.getElementById("bgm-checkbox");
+            bgmEnabled = bgmCheck ? bgmCheck.checked : true;
+
+            if (bgmEnabled) {
+                bgmTopToggle.innerHTML = "🎵 음악 ON";
+                bgmTopToggle.className = "text-sm bg-white hover:bg-amber-100 text-amber-700 font-bold px-2.5 py-1 rounded-xl border border-amber-300 shadow-sm transition active:scale-95 cursor-pointer whitespace-nowrap";
+            } else {
+                bgmTopToggle.innerHTML = "🔇 음악 OFF";
+                bgmTopToggle.className = "text-sm bg-white hover:bg-amber-100 text-gray-400 font-bold px-2.5 py-1 rounded-xl border border-amber-300 shadow-sm transition active:scale-95 cursor-pointer whitespace-nowrap";
+            }
+
+            let selectedLevel = parseInt(startLevelInput.value) || 1;
+            if (selectedLevel < 1) selectedLevel = 1;
+            
+            level = selectedLevel; score = (level - 1) * 80; hp = 5;
+            particles = [];
+            activeHammers = [];
+            
+            scoreText.innerText = score; levelText.innerText = level; updateHpDisplay();
+            
+            startScreen.classList.add("hidden");
+            gameoverScreen.classList.add("hidden");
+            pauseOverlay.classList.add("hidden");
+            
+            pauseBtn.disabled = false; isPaused = false;
+            pauseBtn.innerHTML = "⏸️ 일시정지";
+            pauseBtn.className = "px-5 bg-orange-500 hover:bg-orange-600 text-white font-bold rounded-xl shadow transition transform active:scale-95 whitespace-nowrap cursor-pointer";
+            
+            gameActive = true; 
+            bgmNoteIndex = 0; 
+            if (bgmEnabled) startBgm(); 
+            
+            buildRoundData();
+            requestAnimationFrame(gameLoop);
+        }
+
+        function endGame() {
+            gameActive = false; pauseBtn.disabled = true;
+            stopBgm(); 
+            document.getElementById("final-score").innerText = score;
+            gameoverScreen.classList.remove("hidden");
+        }
+
+        function goHome() {
+            gameoverScreen.classList.add("hidden");
+            startScreen.classList.remove("hidden");
+        }
+
+        document.getElementById("start-btn").addEventListener("click", startGame);
+        document.getElementById("restart-btn").addEventListener("click", startGame);
+        document.getElementById("home-btn").addEventListener("click", goHome);
+        pauseBtn.addEventListener("click", togglePause);
+        bgmTopToggle.addEventListener("click", toggleBgm);
+    </script>
+</body>
+</html>
